@@ -1,0 +1,4 @@
+Flask==2.0.1
+transformers==4.15.0
+rouge-score==0.0.4
+pydub==0.25.1
