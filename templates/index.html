@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SummarizeHub - Your Conversation Summarizer</title>
+    <style>
+
+        body {
+            background-image: url('https://images.unsplash.com/photo-1483354483454-4cd359948304?q=80&w=3000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #343a40;
+        }
+    
+
+        header {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1em;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 2em auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .audio-input {
+            display: block;
+            margin-top: 1em;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 0.5em 1em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        h2 {
+            margin-top: 2em;
+            color: #343a40;
+        }
+
+        p {
+            white-space: pre-line;
+            color: #343a40;
+        }
+
+        #audio_inputs {
+            margin-top: 1em;
+        }
+
+        #summary_section {
+            margin-top: 2em;
+            color: white;
+        }
+
+        button#go_back {
+            background-color: #007bff;
+            color: white;
+            padding: 0.5em 1em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1em;
+        }
+
+        button#go_back:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SummarizeHub</h1>
+        <p>Your Conversation Summarizer</p>
+    </header>
+    <form action="/summarize" method="post" enctype="multipart/form-data">
+        <label for="user_input">Enter Conversation:</label>
+        <textarea name="user_input" id="user_input" rows="8" required></textarea>
+        <div id="audio_inputs">
+            <!-- Dynamic audio input fields will be added here -->
+        </div>
+        <button type="button" onclick="addAudioInput()">Add Audio File</button>
+        <input type="submit" value="Summarize">
+    </form>
+    <div id="summary_section">
+        {% if user_input %}
+            <h2 style="color: white;">Original Conversation:</h2>
+            <p style="color: white;">{{ user_input }}</p>
+            {% if audio_texts %}
+                <h2 style="color: white;">Transcribed Audio:</h2>
+                {% for audio_text in audio_texts %}
+                    <p style="color: white;">{{ audio_text }}</p>
+                {% endfor %}
+            {% endif %}
+            <h2 style="color: white;">Generated Summary:</h2>
+            <p style="color: white;">{{ generated_summary }}</p>
+            <h2 style="color: white;">ROUGE Scores:</h2>
+            <p style="color: white;">ROUGE-1: {{ rouge_scores['rouge1'].fmeasure }}</p>
+            <p style="color: white;">ROUGE-2: {{ rouge_scores['rouge2'].fmeasure }}</p>
+            <p style="color: white;">ROUGE-L: {{ rouge_scores['rougeL'].fmeasure }}</p>
+            <button id="go_back" onclick="goBack()">Go Back</button>
+        {% endif %}
+    </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        // JavaScript function to dynamically add audio input fields
+        var audioInputIndex = 0;
+
+        function addAudioInput() {
+            var audioInputsDiv = document.getElementById("audio_inputs");
+            
+            var label = document.createElement("label");
+            label.for = "audio_input_" + audioInputIndex;
+            label.innerText = "Upload Audio File (Optional):";
+
+            var audioInput = document.createElement("input");
+            audioInput.type = "file";
+            audioInput.name = "audio_input_" + audioInputIndex;
+            audioInput.accept = "audio/*";
+            audioInput.className = "audio-input";
+
+            audioInputsDiv.appendChild(label);
+            audioInputsDiv.appendChild(audioInput);
+
+            audioInputIndex++;
+        }
+    </script>
+</body>
+</html>
